@@ -6,14 +6,21 @@ Unofficial API client for Arzeka mobile money payments in Burkina Faso
 import base64
 import logging
 import time
-from typing import Dict, Optional, Any
+from typing import Any, Dict, Optional
 from urllib.parse import urljoin
 
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from utils import get_reference, generate_hash_signature
+from .exceptions import (
+    ArzekaAPIError,
+    ArzekaAuthenticationError,
+    ArzekaConnectionError,
+    ArzekaPaymentError,
+    ArzekaValidationError,
+)
+from .utils import generate_hash_signature, get_reference
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -28,44 +35,6 @@ DEFAULT_TIMEOUT = 30
 MAX_RETRIES = 3
 MINIMUM_AMOUNT = 100  # Minimum payment amount in FCFA
 EXPIRATION_MARGIN_SECONDS = 60  # Default margin for token validity checks
-
-
-class ArzekaPaymentError(Exception):
-    """Base exception for Arzeka payment errors"""
-
-    pass
-
-
-class ArzekaConnectionError(ArzekaPaymentError):
-    """Exception raised when connection to Arzeka API fails"""
-
-    pass
-
-
-class ArzekaValidationError(ArzekaPaymentError):
-    """Exception raised when payment data validation fails"""
-
-    pass
-
-
-class ArzekaAPIError(ArzekaPaymentError):
-    """Exception raised when Arzeka API returns an error"""
-
-    def __init__(
-        self,
-        message: str,
-        status_code: Optional[int] = None,
-        response_data: Optional[Dict] = None,
-    ):
-        super().__init__(message)
-        self.status_code = status_code
-        self.response_data = response_data
-
-
-class ArzekaAuthenticationError(ArzekaPaymentError):
-    """Exception raised when authentication fails"""
-
-    pass
 
 
 class BasePayment:

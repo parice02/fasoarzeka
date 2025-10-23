@@ -2,9 +2,9 @@
 Utility functions for Arzeka Payment API
 """
 
-from datetime import datetime
 import base64
 import hashlib
+from datetime import datetime
 
 
 def get_reference() -> str:
