@@ -498,7 +498,7 @@ class ArzekaPayment(BasePayment):
             # Update the client's token if authentication successful
             if response_data.get("access_token"):
                 self._token = response_data["access_token"]
-                self._expires_at = time.time() + response_data["expires_in"]
+                self._expires_at = time.time() + float(response_data["expires_in"])
                 # Store credentials for automatic re-authentication
                 self._username = username
                 self._password = password
