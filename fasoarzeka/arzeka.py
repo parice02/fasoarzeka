@@ -644,7 +644,7 @@ class ArzekaPayment(BasePayment):
             ).decode(),
         }
 
-        hash_string = generate_hash_signature(secret=hash_secret, **payment_data)
+        hash_string = generate_hash_signature(hash_secret=hash_secret, **payment_data)
         payment_data["hashString"] = hash_string
 
         logger.info(
