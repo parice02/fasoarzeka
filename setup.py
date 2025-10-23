@@ -10,7 +10,7 @@ with open(BASE_DIR / "README.md") as file:
     _description = file.read()
 
 setup(
-    name="faso-arzeka",
+    name="fasoarzeka",
     version="0.0.1",
     long_description=_description,
     long_description_content_type="text/markdown",
