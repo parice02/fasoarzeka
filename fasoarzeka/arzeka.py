@@ -143,7 +143,7 @@ class BasePayment:
             ArzekaAPIError: If API returns an error
         """
 
-        if self._token is None or self.expires_in is None:
+        if self._token is None or self._expires_at is None:
             raise ArzekaAuthenticationError(
                 "Authentication token is not set. Please authenticate first."
             )
