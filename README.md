@@ -366,11 +366,39 @@ python -m pytest test/ -v
 
 ## 📖 Documentation complète
 
+### Documentation style ReadTheDocs
+
+**📚 Documentation HTML complète disponible dans `docs_sphinx/`**
+
+Pour générer et consulter la documentation :
+
+```bash
+cd docs_sphinx
+pip install -r requirements.txt
+./build.sh
+# Puis ouvrez _build/html/index.html dans votre navigateur
+```
+
+La documentation comprend :
+- Guide d'installation détaillé
+- Guide de démarrage rapide
+- Guide d'authentification complet
+- Référence API complète avec autodoc
+- Exemples de code annotés
+- Guide de gestion d'erreurs
+- Fonctionnalités avancées
+- Guide de contribution
+
+### Guides Markdown
+
 - **[Guide de démarrage rapide](docs/QUICKSTART.md)** - Commencer en 5 minutes
 - **[Guide d'authentification](docs/AUTHENTICATION.md)** - Tout sur l'authentification
 - **[Validation des tokens](docs/TOKEN_VALIDATION.md)** - Gestion des tokens
 - **[Réauthentification automatique](docs/AUTO_REAUTH.md)** - Fonctionnalité avancée
-- **[Exemples de code](examples/)** - Exemples pratiques
+
+### Exemples de code
+
+- **[Exemples pratiques](examples/)** - Code exécutable
   - `authentication_example.py` - Exemples d'authentification
   - `token_validation_example.py` - Validation de tokens
   - `shared_client_example.py` - Instance partagée
@@ -579,7 +607,51 @@ Les contributions sont les bienvenues ! Voici comment contribuer :
 
 Voir [CHANGELOG.md](CHANGELOG.md) pour l'historique détaillé des modifications.
 
-## 📄 Licence
+## � Documentation ReadTheDocs
+
+### Génération locale
+
+Pour générer la documentation style ReadTheDocs en local :
+
+```bash
+cd docs_sphinx
+pip install -r requirements.txt
+./build.sh
+# Ouvrez _build/html/index.html dans votre navigateur
+```
+
+### Mode développement
+
+Pour un serveur avec auto-reload :
+
+```bash
+cd docs_sphinx
+make livehtml
+# Accessible sur http://127.0.0.1:8000
+```
+
+### Déploiement
+
+La documentation peut être déployée sur ReadTheDocs.org :
+
+1. Connectez votre repository GitHub à ReadTheDocs
+2. ReadTheDocs détecte automatiquement la configuration (`.readthedocs.yaml`)
+3. La documentation sera accessible sur `https://arzeka-payment.readthedocs.io`
+
+### Contenu de la documentation
+
+- 📖 Guide d'installation détaillé
+- 🚀 Guide de démarrage rapide
+- 🔐 Guide d'authentification complet
+- 💳 Opérations de paiement
+- ⚠️ Gestion d'erreurs
+- 🔧 Fonctionnalités avancées
+- 📚 Référence API complète (autodoc)
+- 💡 Exemples de code annotés
+- 🤝 Guide de contribution
+- 📝 Changelog et licence
+
+## �📄 Licence
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 

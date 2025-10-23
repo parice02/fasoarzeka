@@ -1,0 +1,43 @@
+/* Custom CSS pour la documentation Arzeka Payment */
+
+/* Améliorer la lisibilité du code */
+.highlight {
+    background-color: #f8f8f8;
+    border-left: 3px solid #2980b9;
+    padding: 10px;
+    margin: 15px 0;
+}
+
+/* Style des admonitions */
+.admonition {
+    border-radius: 4px;
+    padding: 12px;
+    margin: 15px 0;
+}
+
+.admonition-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+/* Améliorer les tables */
+table.docutils {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.docutils td,
+table.docutils th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+table.docutils th {
+    background-color: #2980b9;
+    color: white;
+}
+
+/* Style pour les exemples */
+.literal-block-wrapper {
+    margin: 20px 0;
+}
