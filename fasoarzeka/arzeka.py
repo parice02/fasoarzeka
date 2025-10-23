@@ -469,7 +469,7 @@ class ArzekaPayment(BasePayment):
                 "Accept-Language": "fr-FR,en-GB;q=0.8,en;q=0.6",
             }
 
-            response = requests.post(
+            response = self._session.post(
                 url,
                 data=auth_data,
                 headers=headers,
