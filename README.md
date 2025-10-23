@@ -608,50 +608,6 @@ Les contributions sont les bienvenues ! Voici comment contribuer :
 
 Voir [CHANGELOG.md](CHANGELOG.md) pour l'historique détaillé des modifications.
 
-## � Documentation ReadTheDocs
-
-### Génération locale
-
-Pour générer la documentation style ReadTheDocs en local :
-
-```bash
-cd docs_sphinx
-pip install -r requirements.txt
-./build.sh
-# Ouvrez _build/html/index.html dans votre navigateur
-```
-
-### Mode développement
-
-Pour un serveur avec auto-reload :
-
-```bash
-cd docs_sphinx
-make livehtml
-# Accessible sur http://127.0.0.1:8000
-```
-
-### Déploiement
-
-La documentation peut être déployée sur ReadTheDocs.org :
-
-1. Connectez votre repository GitHub à ReadTheDocs
-2. ReadTheDocs détecte automatiquement la configuration (`.readthedocs.yaml`)
-3. La documentation sera accessible sur `https://arzeka-payment.readthedocs.io`
-
-### Contenu de la documentation
-
-- 📖 Guide d'installation détaillé
-- 🚀 Guide de démarrage rapide
-- 🔐 Guide d'authentification complet
-- 💳 Opérations de paiement
-- ⚠️ Gestion d'erreurs
-- 🔧 Fonctionnalités avancées
-- 📚 Référence API complète (autodoc)
-- 💡 Exemples de code annotés
-- 🤝 Guide de contribution
-- 📝 Changelog et licence
-
 ## �📄 Licence
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
