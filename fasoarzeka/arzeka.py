@@ -599,11 +599,11 @@ class ArzekaPayment(BasePayment):
         if not merchant_id or not isinstance(merchant_id, str):
             raise ArzekaValidationError("merchant_id must be a non-empty string")
 
-        if not set(["first_name", "last_name", "mobile"]).issubset(
+        if not set(["firstname", "lastname", "mobile"]).issubset(
             additional_info.keys()
         ):
             raise ArzekaValidationError(
-                "additional_info must contain first_name, last_name, and mobile"
+                "additional_info must contain firstname, lastname, and mobile"
             )
 
         # if "generateReceipt" not in additional_info:
