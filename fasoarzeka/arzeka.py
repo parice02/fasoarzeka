@@ -816,7 +816,7 @@ def initiate_payment(
     payment_data: Dict[str, Any],
     base_url: str = BASE_URL,
     timeout: int = DEFAULT_TIMEOUT,
-) -> Dict[str, str]:
+) -> Tuple[Dict[str, str], Dict[str, str]]:
     """
     Initiate a payment using shared client instance
 
