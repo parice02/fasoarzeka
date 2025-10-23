@@ -11,14 +11,14 @@ def get_reference() -> str:
     """
     Generate a unique reference ID for payment transactions
 
-    Format: eT{YYMMDD}.{HHMMSS}.{microseconds}
-    Example: eT251022.143025.123456
+    Format: {YYMMDD}.{HHMMSS}.{microseconds}
+    Example: 251022.143025.123456
 
     Returns:
         str: Unique reference ID
     """
     reference = datetime.now().strftime("%y%m%d.%H%M%S.%f")
-    return f"eT{reference}"
+    return f"{reference}"
 
 
 def format_msisdn(phone_number: str) -> str:
