@@ -655,7 +655,7 @@ class ArzekaPayment(BasePayment):
         response = self.post(INITIATE_PAYMENT_ENDPOINT, data=payment_data)
 
         logger.info(f"Payment initiated successfully: {mapped_order_id}")
-        return response
+        return response, payment_data
 
     def check_payment(
         self, mapped_order_id: str, transaction_id: str = None
