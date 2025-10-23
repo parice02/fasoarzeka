@@ -606,24 +606,24 @@ class ArzekaPayment(BasePayment):
                 "additional_info must contain first_name, last_name, and mobile"
             )
 
-        if "generateReceipt" not in additional_info:
-            additional_info["generateReceipt"] = False
-            additional_info["paymentDescription"] = ""
-            additional_info["accountingOffice"] = ""
-            additional_info["accountantName"] = ""
-            additional_info["address"] = ""
-        elif (
-            "generateReceipt" in additional_info and additional_info["generateReceipt"]
-        ):
-            required_receipt_fields = [
-                "paymentDescription",
-                "accountingOffice",
-                "accountantName",
-            ]
-            if not set(required_receipt_fields).issubset(additional_info.keys()):
-                raise ArzekaValidationError(
-                    f"When generateReceipt is True, additional_info must contain: {', '.join(required_receipt_fields)}"
-                )
+        # if "generateReceipt" not in additional_info:
+        #     additional_info["generateReceipt"] = False
+        #     additional_info["paymentDescription"] = ""
+        #     additional_info["accountingOffice"] = ""
+        #     additional_info["accountantName"] = ""
+        #     additional_info["address"] = ""
+        # elif (
+        #     "generateReceipt" in additional_info and additional_info["generateReceipt"]
+        # ):
+        #     required_receipt_fields = [
+        #         "paymentDescription",
+        #         "accountingOffice",
+        #         "accountantName",
+        #     ]
+        #     if not set(required_receipt_fields).issubset(additional_info.keys()):
+        #         raise ArzekaValidationError(
+        #             f"When generateReceipt is True, additional_info must contain: {', '.join(required_receipt_fields)}"
+        #         )
 
         # Generate order ID if not provided
         if not mapped_order_id:
