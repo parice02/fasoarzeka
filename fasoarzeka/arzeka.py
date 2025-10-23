@@ -462,6 +462,7 @@ class ArzekaPayment(BasePayment):
             # Make API request without requiring prior authentication
             # Temporarily override headers to exclude Authorization
             url = urljoin(self.base_url, AUTH_ENDPOINT)
+            logger.info(f"Sending authentication request to {url}")
             headers = {
                 "Content-Type": "application/json",
                 "User-Agent": "arzeka-payment-client/1.0",
