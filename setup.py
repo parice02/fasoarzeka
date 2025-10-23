@@ -18,7 +18,7 @@ setup(
     description="API non officiel pour les paiements mobiles le moyen de paiement FASO ARZEKA au Burkina Faso",
     packages=find_packages(),
     author="Mohamed Zeba",
-    author_email="<m.zeba@mzeba.dev>",
+    author_email="m.zeba@mzeba.dev",
     license=_license,
     classifiers=[
         "Intended Audience :: Developers",
