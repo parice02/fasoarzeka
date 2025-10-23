@@ -14,7 +14,7 @@ dynamic = ["version"]
 license = { file = "LICENSE" }
 dependencies = ["requests>=2.31.0", "urllib3<1.27"]
 keywords = [
-    "faso-arzeka ",
+    "fasoarzeka ",
     "burkina payment api",
 ]
 
