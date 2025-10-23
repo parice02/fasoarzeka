@@ -14,7 +14,7 @@ setup(
     version="0.0.1",
     long_description=_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/parice02/faso-arzeka",
+    url="https://github.com/parice02/fasoarzeka",
     description="API non officiel pour les paiements mobiles le moyen de paiement FASO ARZEKA au Burkina Faso",
     packages=find_packages(),
     author="Mohamed Zeba",

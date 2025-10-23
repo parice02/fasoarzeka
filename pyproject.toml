@@ -1,28 +1,27 @@
 [project]
-name = "faso-arzeka"
+name = "fasoarzeka"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-description = "Library for faso-arzeka sms"
-authors = [{ name = "Mohamed ZEBA", email = "parice02@hotmail.com" }]
+description = "API non officiel pour les paiements mobiles le moyen de paiement FASO ARZEKA au Burkina Faso"
+authors = [{ name = "Mohamed ZEBA", email = "m.zeba@mzeba.dev" }]
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.8"
 dynamic = ["version"]
 license = { file = "LICENSE" }
-dependencies = ["requests>=2.31.0"]
+dependencies = ["requests>=2.31.0", "urllib3<1.27"]
 keywords = [
-    "burkina faso sms",
-    "faso-arzeka sms",
-    "burkina sms",
+    "faso-arzeka ",
+    "burkina payment api",
 ]
 
 [project.urls]
-Homepage = "https://github.com/parice02/faso-arzeka"
-Issues = "https://github.com/parice02/faso-arzeka/issues"
-Repository = "https://github.com/parice02/faso-arzeka.git"
+Homepage = "https://github.com/parice02/fasoarzeka"
+Issues = "https://github.com/parice02/fasoarzeka/issues"
+Repository = "https://github.com/parice02/fasoarzeka.git"
 
 [build-system]
 requires = ["setuptools>=61.0"]
