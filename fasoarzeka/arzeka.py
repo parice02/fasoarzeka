@@ -635,7 +635,7 @@ class ArzekaPayment(BasePayment):
             "amount": amount,
             "merchant_id": merchant_id,
             "mappedOrderId": mapped_order_id,
-            "additionalInfo": json.dumps(additional_info, indent=0),
+            "additionalInfo": json.dumps(additional_info),
             "linkForUpdateStatus": base64.b64encode(
                 link_for_update_status.encode()
             ).decode(),
