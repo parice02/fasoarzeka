@@ -11,7 +11,12 @@ from .arzeka import (
     get_shared_client,
     initiate_payment,
 )
-from .utils import format_msisdn, get_reference, validate_phone_number
+from .utils import (
+    format_msisdn,
+    get_reference,
+    validate_phone_number,
+    generate_hash_signature,
+)
 
 __version__ = "1.0.0"
 __author__ = "Mohamed Zeba (m.zeba@mzeba.dev)"
@@ -28,4 +33,5 @@ __all__ = [
     "get_reference",
     "format_msisdn",
     "validate_phone_number",
+    "generate_hash_signature",
 ]
