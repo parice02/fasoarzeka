@@ -633,7 +633,7 @@ class ArzekaPayment(BasePayment):
         # Prepare payment data
         payment_data = {
             "amount": amount,
-            "merchant_id": merchant_id,
+            "merchantId": merchant_id,
             "mappedOrderId": mapped_order_id,
             "additionalInfo": json.dumps(additional_info, separators=(",", ":")),
             "linkForUpdateStatus": base64.b64encode(
