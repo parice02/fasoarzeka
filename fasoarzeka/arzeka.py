@@ -4,6 +4,7 @@ Unofficial API client for Arzeka mobile money payments in Burkina Faso
 """
 
 import base64
+import json
 import logging
 import time
 from typing import Any, Dict, Optional
@@ -633,7 +634,7 @@ class ArzekaPayment(BasePayment):
             "amount": amount,
             "merchant_id": merchant_id,
             "mappedOrderId": mapped_order_id,
-            "additionalInfo": additional_info,
+            "additionalInfo": json.dumps(additional_info),
             "linkForUpdateStatus": base64.b64encode(
                 link_for_update_status.encode()
             ).decode(),
