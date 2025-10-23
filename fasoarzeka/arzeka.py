@@ -7,7 +7,7 @@ import base64
 import json
 import logging
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 from urllib.parse import urljoin
 
 import requests
@@ -566,7 +566,7 @@ class ArzekaPayment(BasePayment):
         additional_info: Dict[str, Any],
         hash_secret: str,
         mapped_order_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Initiate a payment transaction
 
