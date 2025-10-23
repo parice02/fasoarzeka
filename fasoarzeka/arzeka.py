@@ -464,7 +464,7 @@ class ArzekaPayment(BasePayment):
             url = urljoin(self.base_url, AUTH_ENDPOINT)
             logger.info(f"Sending authentication request to {url}")
             headers = {
-                "Content-Type": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded",
                 "User-Agent": "arzeka-payment-client/1.0",
                 "Accept-Language": "fr-FR,en-GB;q=0.8,en;q=0.6",
             }
