@@ -86,7 +86,7 @@ def generate_hash_signature(secret: str, **kwargs) -> str:
         str: The generated hash signature.
     """
     # Combine data and secret
-    message = f"{kwargs.get("amount")}|{kwargs.get("merchant_id")}|{kwargs.get("mapped_order_id")}|{kwargs.get("linkBackToCallingWebsite")}|{kwargs.get("linkForUpdateStatus")}|{kwargs.get("additionalInfo")}|{secret}".encode()
+    message = f"{kwargs.get("amount")}|{kwargs.get("merchant_id")}|{kwargs.get("mappedOrderId")}|{kwargs.get("linkBackToCallingWebsite")}|{kwargs.get("linkForUpdateStatus")}|{kwargs.get("additionalInfo")}|{secret}".encode()
 
     # Generate SHA256 hash
     hash_signature = hashlib.sha256(message).digest()
