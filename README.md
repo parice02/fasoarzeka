@@ -256,8 +256,9 @@ print(f"Valid: {is_valid}")  # True
 Le client fournit des exceptions spécifiques pour différents types d'erreurs :
 
 ```python
-from arzeka import (
-    ArzekaPayment,
+from arzeka import ArzekaPayment
+
+from exceptions import (
     ArzekaPaymentError,
     ArzekaConnectionError,
     ArzekaValidationError,

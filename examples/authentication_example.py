@@ -2,8 +2,7 @@
 Exemple complet d'authentification et de paiement avec Arzeka API
 """
 
-from arzeka import ArzekaPayment, authenticate
-from arzeka import ArzekaAuthenticationError, ArzekaPaymentError
+from arzeka import ArzekaAuthenticationError, ArzekaPayment, ArzekaPaymentError, authenticate
 
 # Configuration
 BASE_URL = "https://pwg-test.fasoarzeka.com/"

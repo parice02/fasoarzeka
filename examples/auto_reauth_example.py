@@ -6,7 +6,8 @@ re-authenticates when the token expires, without manual intervention.
 """
 
 import time
-from arzeka import ArzekaPayment, authenticate, initiate_payment, check_payment
+
+from arzeka import ArzekaPayment, authenticate, check_payment, initiate_payment
 
 
 def example_1_automatic_reauth_with_instance():

@@ -3,6 +3,7 @@ Exemple d'utilisation de la méthode is_token_valid() pour vérifier la validit�
 """
 
 import time
+
 from arzeka import ArzekaPayment
 
 # Configuration

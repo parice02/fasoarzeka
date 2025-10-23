@@ -2,34 +2,31 @@
 Tests unitaires pour le client Arzeka Payment API
 """
 
-import unittest
 import time
+import unittest
+from unittest.mock import MagicMock, Mock, PropertyMock, patch
+
 import requests
-from unittest.mock import Mock, patch, MagicMock, PropertyMock
+
 from arzeka import (
-    ArzekaPayment,
-    BasePayment,
-    ArzekaPaymentError,
-    ArzekaValidationError,
-    ArzekaAPIError,
-    ArzekaConnectionError,
-    ArzekaAuthenticationError,
-    initiate_payment,
-    check_payment,
-    authenticate,
-    get_shared_client,
-    close_shared_client,
     BASE_URL,
     DEFAULT_TIMEOUT,
-    MINIMUM_AMOUNT,
     EXPIRATION_MARGIN_SECONDS,
+    MINIMUM_AMOUNT,
+    ArzekaAPIError,
+    ArzekaAuthenticationError,
+    ArzekaConnectionError,
+    ArzekaPayment,
+    ArzekaPaymentError,
+    ArzekaValidationError,
+    BasePayment,
+    authenticate,
+    check_payment,
+    close_shared_client,
+    get_shared_client,
+    initiate_payment,
 )
-from utils import (
-    get_reference,
-    format_msisdn,
-    validate_phone_number,
-    generate_hash_signature,
-)
+from utils import format_msisdn, generate_hash_signature, get_reference, validate_phone_number
 
 
 class TestUtils(unittest.TestCase):

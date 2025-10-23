@@ -3,6 +3,7 @@ Quick test script for automatic re-authentication feature
 """
 
 import time
+
 from arzeka import ArzekaPayment
 
 

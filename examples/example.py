@@ -2,12 +2,15 @@
 Example usage of the improved Arzeka Payment API client
 """
 
-from arzeka import ArzekaPayment, initiate_payment, check_payment, authenticate
 from arzeka import (
-    ArzekaPaymentError,
-    ArzekaValidationError,
     ArzekaAPIError,
     ArzekaAuthenticationError,
+    ArzekaPayment,
+    ArzekaPaymentError,
+    ArzekaValidationError,
+    authenticate,
+    check_payment,
+    initiate_payment,
 )
 
 # Configuration

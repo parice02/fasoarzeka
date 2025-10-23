@@ -4,10 +4,10 @@ Exemples d'utilisation des fonctions de commodité avec instance partagée
 
 from arzeka import (
     authenticate,
-    initiate_payment,
     check_payment,
-    get_shared_client,
     close_shared_client,
+    get_shared_client,
+    initiate_payment,
 )
 
 # Configuration
