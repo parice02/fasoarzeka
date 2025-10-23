@@ -34,7 +34,7 @@ AUTH_ENDPOINT = "auth/getToken"
 PAYMENT_VERIFICATION_ENDPOINT = "app/getThirdPartyMapInfo"
 DEFAULT_TIMEOUT = 30
 MAX_RETRIES = 3
-MINIMUM_AMOUNT = 100  # Minimum payment amount in FCFA
+MINIMUM_AMOUNT = 100  # Minimum payment amount in Franc CFA (XOF)
 EXPIRATION_MARGIN_SECONDS = 60  # Default margin for token validity checks
 
 
@@ -106,7 +106,7 @@ class BasePayment:
             Dictionary of headers
         """
         headers = {
-            "Content-Type": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
             "User-Agent": "arzeka-payment-client/1.0",
             "Accept-Language": "fr-FR,en-GB;q=0.8,en;q=0.6",
             "Authorization": f"Bearer {self._token}",
@@ -159,7 +159,7 @@ class BasePayment:
 
             if method.upper() == "POST":
                 response = self._session.post(
-                    url, json=data, headers=headers, timeout=timeout, **kwargs
+                    url, data=data, headers=headers, timeout=timeout, **kwargs
                 )
             elif method.upper() == "GET":
                 response = self._session.get(
@@ -471,7 +471,7 @@ class ArzekaPayment(BasePayment):
 
             response = self._session.post(
                 url,
-                json=auth_data,
+                data=auth_data,
                 headers=headers,
                 timeout=self.timeout,
             )
