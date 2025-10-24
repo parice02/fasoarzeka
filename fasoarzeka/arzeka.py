@@ -689,8 +689,8 @@ class ArzekaPayment(BasePayment):
             "mappedOrderId": mapped_order_id,
         }
 
-        if transaction_id:
-            verification_data["transactionId"] = transaction_id
+        # if transaction_id:
+        #     verification_data["transId"] = transaction_id
 
         # Make API request
         response = self.post(PAYMENT_VERIFICATION_ENDPOINT, data=verification_data)
