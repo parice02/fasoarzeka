@@ -606,24 +606,24 @@ class ArzekaPayment(BasePayment):
                 "additional_info must contain firstname, lastname, and mobile"
             )
 
-        # if "generateReceipt" not in additional_info:
-        #     additional_info["generateReceipt"] = False
-        #     additional_info["paymentDescription"] = ""
-        #     additional_info["accountingOffice"] = ""
-        #     additional_info["accountantName"] = ""
-        #     additional_info["address"] = ""
-        # elif (
-        #     "generateReceipt" in additional_info and additional_info["generateReceipt"]
-        # ):
-        #     required_receipt_fields = [
-        #         "paymentDescription",
-        #         "accountingOffice",
-        #         "accountantName",
-        #     ]
-        #     if not set(required_receipt_fields).issubset(additional_info.keys()):
-        #         raise ArzekaValidationError(
-        #             f"When generateReceipt is True, additional_info must contain: {', '.join(required_receipt_fields)}"
-        #         )
+        if "generateReceipt" not in additional_info:
+            additional_info["generateReceipt"] = False
+            additional_info["paymentDescription"] = ""
+            additional_info["accountingOffice"] = ""
+            additional_info["accountantName"] = ""
+            additional_info["address"] = ""
+        elif (
+            "generateReceipt" in additional_info and additional_info["generateReceipt"]
+        ):
+            required_receipt_fields = [
+                "paymentDescription",
+                "accountingOffice",
+                "accountantName",
+            ]
+            if not set(required_receipt_fields).issubset(additional_info.keys()):
+                raise ArzekaValidationError(
+                    f"When generateReceipt is True, additional_info must contain: {', '.join(required_receipt_fields)}"
+                )
 
         # Generate order ID if not provided
         if not mapped_order_id:
@@ -685,17 +685,13 @@ class ArzekaPayment(BasePayment):
         logger.info(f"Checking payment status for order: {mapped_order_id}")
 
         # Prepare query parameters
-        verification_data = {
-            "mappedOrderId": mapped_order_id,
-        }
+        url = PAYMENT_VERIFICATION_ENDPOINT + f"?mappedOrderId={mapped_order_id}"
 
-        # if transaction_id:
-        #     verification_data["transId"] = transaction_id
+        if transaction_id:
+            url += f"&transId={transaction_id}"
 
         # Make API request
-        response = self.post(
-            PAYMENT_VERIFICATION_ENDPOINT + f"?mappedOrderId={mapped_order_id}"
-        )
+        response = self.post(url)
 
         logger.info(f"Payment status retrieved for order: {mapped_order_id}")
         return response
