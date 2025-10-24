@@ -693,7 +693,9 @@ class ArzekaPayment(BasePayment):
         #     verification_data["transId"] = transaction_id
 
         # Make API request
-        response = self.get(PAYMENT_VERIFICATION_ENDPOINT, data=verification_data)
+        response = self.post(
+            PAYMENT_VERIFICATION_ENDPOINT + f"?mappedOrderId={mapped_order_id}"
+        )
 
         logger.info(f"Payment status retrieved for order: {mapped_order_id}")
         return response
