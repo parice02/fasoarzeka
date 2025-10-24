@@ -3,7 +3,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-API client Python non officiel pour les paiements mobiles FASO ARZEKA au Burkina Faso.
+API client Python non officiel pour les paiements mobiles FASO ARZEKA au Burkina Faso v3.0.1.
 Client robuste, production-ready avec gestion automatique des erreurs, retry automatique, et réauthentification automatique.
 
 ## ✨ Fonctionnalités principales
