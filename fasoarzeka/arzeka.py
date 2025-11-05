@@ -599,7 +599,7 @@ class ArzekaPayment(BasePayment):
             )
 
         if not merchant_id or not isinstance(merchant_id, (str, int)):
-            raise ArzekaValidationError("merchant_id must be a non-empty string")
+            raise ArzekaValidationError("merchant_id must be a non-empty string/int")
 
         if not set(["firstname", "lastname", "mobile"]).issubset(
             additional_info.keys()
