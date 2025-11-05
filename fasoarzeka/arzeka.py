@@ -608,6 +608,15 @@ class ArzekaPayment(BasePayment):
                 "additional_info must contain firstname, lastname, and mobile"
             )
 
+        if (
+            not additional_info.get("firstname", None)
+            or not additional_info.get("lastname", None)
+            or not additional_info.get("mobile", None)
+        ):
+            raise ArzekaValidationError(
+                "additional_info fields firstname, lastname, and mobile cannot be empty or null"
+            )
+
         if "generateReceipt" not in additional_info:
             additional_info["generateReceipt"] = False
             additional_info["paymentDescription"] = ""
