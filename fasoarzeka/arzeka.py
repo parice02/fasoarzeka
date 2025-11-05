@@ -28,7 +28,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Constants
-BASE_URL = " https://pgw-test.fasoarzeka.bf/AvepayPaymentGatewayUI/avepay-payment/"
+BASE_URL = "https://pgw-test.fasoarzeka.bf/AvepayPaymentGatewayUI/avepay-payment/"
 INITIATE_PAYMENT_ENDPOINT = "app/initializePayment"
 AUTH_ENDPOINT = "auth/getToken"
 PAYMENT_VERIFICATION_ENDPOINT = "app/getThirdPartyMapInfo"
