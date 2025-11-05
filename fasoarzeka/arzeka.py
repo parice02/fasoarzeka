@@ -61,6 +61,7 @@ class BasePayment:
         """
 
         self._token: str = None
+        self._token_type: str = None
         self._expires_at: float = None
         self._username: Optional[str] = None
         self._password: Optional[str] = None
@@ -109,7 +110,7 @@ class BasePayment:
             "Content-Type": "application/x-www-form-urlencoded",
             "User-Agent": "arzeka-payment-client/1.0",
             "Accept-Language": "fr-FR,en-GB;q=0.8,en;q=0.6",
-            "Authorization": f"Bearer {self._token}",
+            "Authorization": f"{self._token_type} {self._token}",
         }
 
         if additional_headers:
@@ -502,6 +503,7 @@ class ArzekaPayment(BasePayment):
                 # Store credentials for automatic re-authentication
                 self._username = username
                 self._password = password
+                self._token_type = response_data.get("token_type", "Bearer")
 
                 logger.info(f"Authentication successful for user: {username}")
 
@@ -596,7 +598,7 @@ class ArzekaPayment(BasePayment):
                 f"amount must be a positive number greater than {MINIMUM_AMOUNT}"
             )
 
-        if not merchant_id or not isinstance(merchant_id, str):
+        if not merchant_id or not isinstance(merchant_id, [str, int]):
             raise ArzekaValidationError("merchant_id must be a non-empty string")
 
         if not set(["firstname", "lastname", "mobile"]).issubset(
