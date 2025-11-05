@@ -180,8 +180,6 @@ def generate_hash_signature(
     try:
         hash_digest = hashlib.sha256(message.encode("utf-8")).digest()
         signature = base64.b64encode(hash_digest).decode("utf-8")
-        print("Generated message for hashing:", message)
-        print("Generated signature:", signature)
         return signature
     except Exception as e:
         raise RuntimeError(f"Failed to generate hash signature: {str(e)}")

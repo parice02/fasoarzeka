@@ -662,8 +662,6 @@ class ArzekaPayment(BasePayment):
             f"Initiating payment for order: {mapped_order_id}, amount: {amount}"
         )
 
-        logger.info(f"Payment data prepared, sending request to API: {payment_data}")
-
         # Make API request
         response = self.post(INITIATE_PAYMENT_ENDPOINT, data=payment_data)
 
