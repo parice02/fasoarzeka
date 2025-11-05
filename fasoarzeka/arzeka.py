@@ -598,7 +598,7 @@ class ArzekaPayment(BasePayment):
                 f"amount must be a positive number greater than {MINIMUM_AMOUNT}"
             )
 
-        if not merchant_id or not isinstance(merchant_id, [str, int]):
+        if not merchant_id or not isinstance(merchant_id, (str, int)):
             raise ArzekaValidationError("merchant_id must be a non-empty string")
 
         if not set(["firstname", "lastname", "mobile"]).issubset(
