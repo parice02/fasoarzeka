@@ -753,39 +753,8 @@ class ArzekaPayment(BasePayment):
         if kwargs:
             data.update(kwargs)
 
-        url = SEND_SMS
-
-        headers = self._get_headers({})
-
-        try:
-            response = self._session.post(url, data=data, headers=headers, timeout=self.timeout)
-            response.raise_for_status()
-
-            try:
-                return response.json()
-            except ValueError:
-                return {"raw_response": response.text}
-
-        except requests.exceptions.Timeout as e:
-            logger.error(f"SMS request timeout: {e}")
-            raise ArzekaConnectionError(f"SMS request timeout after {self.timeout} seconds") from e
-
-        except requests.exceptions.ConnectionError as e:
-            logger.error(f"SMS connection error: {e}")
-            raise ArzekaConnectionError(f"Failed to connect to SMS endpoint: {e}") from e
-
-        except requests.exceptions.HTTPError as e:
-            logger.error(f"SMS HTTP error: {e}")
-            try:
-                error_data = response.json()
-            except ValueError:
-                error_data = {"error": response.text}
-
-            raise ArzekaAPIError(f"SMS request failed: {e}", status_code=response.status_code, response_data=error_data) from e
-
-        except Exception as e:
-            logger.error(f"Unexpected error sending SMS: {e}")
-            raise ArzekaPaymentError(f"Unexpected error sending SMS: {e}") from e
+        # Use existing request wrapper to benefit from shared headers/retries/errors
+        return self.post(SEND_SMS, data=data)
 
     def check_sms_status(self, sms_id: str) -> Dict[str, Any]:
         """Check the delivery/status of a previously sent SMS
@@ -801,39 +770,7 @@ class ArzekaPayment(BasePayment):
         if not sms_id or not isinstance(sms_id, str):
             raise ArzekaValidationError("sms_id must be a non-empty string")
 
-        url = CHECK_SMS_STATUS
-
-        headers = self._get_headers({})
-
-        try:
-            response = self._session.get(url, params={"smsId": sms_id}, headers=headers, timeout=self.timeout)
-            response.raise_for_status()
-
-            try:
-                return response.json()
-            except ValueError:
-                return {"raw_response": response.text}
-
-        except requests.exceptions.Timeout as e:
-            logger.error(f"SMS status request timeout: {e}")
-            raise ArzekaConnectionError(f"SMS status request timeout after {self.timeout} seconds") from e
-
-        except requests.exceptions.ConnectionError as e:
-            logger.error(f"SMS status connection error: {e}")
-            raise ArzekaConnectionError(f"Failed to connect to SMS status endpoint: {e}") from e
-
-        except requests.exceptions.HTTPError as e:
-            logger.error(f"SMS status HTTP error: {e}")
-            try:
-                error_data = response.json()
-            except ValueError:
-                error_data = {"error": response.text}
-
-            raise ArzekaAPIError(f"SMS status request failed: {e}", status_code=response.status_code, response_data=error_data) from e
-
-        except Exception as e:
-            logger.error(f"Unexpected error checking SMS status: {e}")
-            raise ArzekaPaymentError(f"Unexpected error checking SMS status: {e}") from e
+        return self.get(CHECK_SMS_STATUS + f"?smsId={sms_id}")
 
 
 # Shared client instance for convenience functions
