@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 
+
 class ArzekaPaymentError(Exception):
     """Base exception for Arzeka payment errors"""
 
@@ -37,3 +38,13 @@ class ArzekaAuthenticationError(ArzekaPaymentError):
     """Exception raised when authentication fails"""
 
     pass
+
+
+__all__ = [
+    "ArzekaPaymentError",
+    "ArzekaConnectionError",
+    "ArzekaValidationError",
+    "ArzekaAPIError",
+    "ArzekaAuthenticationError",
+    "_",
+]

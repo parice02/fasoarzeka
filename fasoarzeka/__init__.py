@@ -17,6 +17,7 @@ from .utils import (
     validate_phone_number,
     generate_hash_signature,
 )
+from .i18n import install_translations
 
 __version__ = "1.0.0"
 __author__ = "Mohamed Zeba (m.zeba@mzeba.dev)"
@@ -34,4 +35,6 @@ __all__ = [
     "format_msisdn",
     "validate_phone_number",
     "generate_hash_signature",
+    # i18n helper
+    "install_translations",
 ]

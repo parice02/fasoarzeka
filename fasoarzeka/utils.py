@@ -5,6 +5,14 @@ Utility functions for Arzeka Payment API
 import base64
 import hashlib
 from datetime import datetime
+import gettext
+
+
+# Use stdlib gettext for this library; applications can install translations
+# by calling gettext.bindtextdomain / gettext.textdomain as needed.
+
+
+_ = gettext.gettext
 
 
 def get_reference() -> str:

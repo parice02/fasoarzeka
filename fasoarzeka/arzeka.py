@@ -14,14 +14,14 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from .exceptions import (
+from fasoarzeka.exceptions import (
     ArzekaAPIError,
     ArzekaAuthenticationError,
     ArzekaConnectionError,
     ArzekaPaymentError,
     ArzekaValidationError,
 )
-from .utils import generate_hash_signature, get_reference
+from fasoarzeka.utils import generate_hash_signature, get_reference, _
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -146,7 +146,7 @@ class BasePayment:
 
         if self._token is None or self._expires_at is None:
             raise ArzekaAuthenticationError(
-                "Authentication token is not set. Please authenticate first."
+                _("Authentication token is not set. Please authenticate first.")
             )
 
         url = urljoin(self.base_url, endpoint)
@@ -184,12 +184,14 @@ class BasePayment:
         except requests.exceptions.Timeout as e:
             logger.error(f"Request timeout: {e}")
             raise ArzekaConnectionError(
-                f"Request timeout after {timeout} seconds"
+                _("Request timeout after %(timeout)s seconds") % {"timeout": timeout}
             ) from e
 
         except requests.exceptions.ConnectionError as e:
             logger.error(f"Connection error: {e}")
-            raise ArzekaConnectionError(f"Failed to connect to Arzeka API: {e}") from e
+            raise ArzekaConnectionError(
+                _("Failed to connect to Arzeka API: %(err)s") % {"err": e}
+            ) from e
 
         except requests.exceptions.HTTPError as e:
             logger.error(f"HTTP error: {e}")
@@ -199,14 +201,14 @@ class BasePayment:
                 error_data = {"error": response.text}
 
             raise ArzekaAPIError(
-                f"API request failed: {e}",
+                _("API request failed: %(err)s") % {"err": e},
                 status_code=response.status_code,
                 response_data=error_data,
             ) from e
 
         except Exception as e:
             logger.error(f"Unexpected error: {e}")
-            raise ArzekaPaymentError(f"Unexpected error: {e}") from e
+            raise ArzekaPaymentError(_("Unexpected error: %(err)s") % {"err": e}) from e
 
     def post(
         self, endpoint: str, data: Optional[Dict[str, Any]] = None, **kwargs
@@ -404,8 +406,10 @@ class ArzekaPayment(BasePayment):
         # Check if we have stored credentials
         if not self._username or not self._password:
             raise ArzekaAuthenticationError(
-                "Token expired and no credentials stored for automatic re-authentication. "
-                "Please call authenticate() again with username and password."
+                _(
+                    "Token expired and no credentials stored for automatic re-authentication. "
+                    "Please call authenticate() again with username and password."
+                )
             )
 
         # Re-authenticate
@@ -415,7 +419,7 @@ class ArzekaPayment(BasePayment):
         except Exception as e:
             logger.error(f"Failed to re-authenticate: {e}")
             raise ArzekaAuthenticationError(
-                f"Automatic re-authentication failed: {e}"
+                _("Automatic re-authentication failed: %(err)s") % {"err": e}
             ) from e
 
     def authenticate(self, username: str, password: str) -> Dict[str, Any]:
@@ -445,10 +449,10 @@ class ArzekaPayment(BasePayment):
         """
         # Validate inputs
         if not username or not isinstance(username, str):
-            raise ArzekaValidationError("username must be a non-empty string")
+            raise ArzekaValidationError(_("username must be a non-empty string"))
 
         if not password or not isinstance(password, str):
-            raise ArzekaValidationError("password must be a non-empty string")
+            raise ArzekaValidationError(_("password must be a non-empty string"))
 
         # Prepare authentication data
         auth_data = {
@@ -486,14 +490,14 @@ class ArzekaPayment(BasePayment):
             except ValueError:
                 logger.error("Failed to parse authentication response")
                 raise ArzekaAuthenticationError(
-                    "Invalid response format from authentication endpoint"
+                    _("Invalid response format from authentication endpoint")
                 )
 
             # Validate response contains required fields
             if "access_token" not in response_data:
                 logger.error("Authentication response missing access_token")
                 raise ArzekaAuthenticationError(
-                    "Authentication response missing required fields"
+                    _("Authentication response missing required fields")
                 )
 
             # Update the client's token if authentication successful
@@ -519,11 +523,11 @@ class ArzekaPayment(BasePayment):
             # Handle authentication-specific errors
             if response.status_code == 401:
                 raise ArzekaAuthenticationError(
-                    "Invalid credentials: username or password is incorrect"
+                    _("Invalid credentials: username or password is incorrect")
                 ) from e
             elif response.status_code == 403:
                 raise ArzekaAuthenticationError(
-                    "Access forbidden: account may be locked or inactive"
+                    _("Access forbidden: account may be locked or inactive")
                 ) from e
             else:
                 try:
@@ -532,7 +536,7 @@ class ArzekaPayment(BasePayment):
                     error_data = {"error": response.text}
 
                 raise ArzekaAPIError(
-                    f"Authentication request failed: {e}",
+                    _("Authentication request failed: %(err)s") % {"err": e},
                     status_code=response.status_code,
                     response_data=error_data,
                 ) from e
@@ -540,13 +544,14 @@ class ArzekaPayment(BasePayment):
         except requests.exceptions.ConnectionError as e:
             logger.error(f"Connection error during authentication: {e}")
             raise ArzekaConnectionError(
-                f"Failed to connect to authentication endpoint: {e}"
+                _("Failed to connect to authentication endpoint: %(err)s") % {"err": e}
             ) from e
 
         except requests.exceptions.Timeout as e:
             logger.error(f"Authentication timeout: {e}")
             raise ArzekaConnectionError(
-                f"Authentication request timeout after {self.timeout} seconds"
+                _("Authentication request timeout after %(timeout)s seconds")
+                % {"timeout": self.timeout}
             ) from e
 
         except ArzekaPaymentError:
@@ -556,7 +561,7 @@ class ArzekaPayment(BasePayment):
         except Exception as e:
             logger.error(f"Unexpected error during authentication: {e}")
             raise ArzekaAuthenticationError(
-                f"Authentication failed with unexpected error: {e}"
+                _("Authentication failed with unexpected error: %(err)s") % {"err": e}
             ) from e
 
     def initiate_payment(
@@ -595,17 +600,18 @@ class ArzekaPayment(BasePayment):
         # Validate inputs
         if not isinstance(amount, (int, float)) or amount <= MINIMUM_AMOUNT:
             raise ArzekaValidationError(
-                f"amount must be a positive number greater than {MINIMUM_AMOUNT}"
+                _("amount must be a positive number greater than %(min)s")
+                % {"min": MINIMUM_AMOUNT}
             )
 
         if not merchant_id or not isinstance(merchant_id, (str, int)):
-            raise ArzekaValidationError("merchant_id must be a non-empty string/int")
+            raise ArzekaValidationError(_("merchant_id must be a non-empty string/int"))
 
         if not set(["firstname", "lastname", "mobile"]).issubset(
             additional_info.keys()
         ):
             raise ArzekaValidationError(
-                "additional_info must contain firstname, lastname, and mobile"
+                _("additional_info must contain firstname, lastname, and mobile")
             )
 
         if (
@@ -614,7 +620,9 @@ class ArzekaPayment(BasePayment):
             or not additional_info.get("mobile", None)
         ):
             raise ArzekaValidationError(
-                "additional_info fields firstname, lastname, and mobile cannot be empty or null"
+                _(
+                    "additional_info fields firstname, lastname, and mobile cannot be empty or null"
+                )
             )
 
         if "generateReceipt" not in additional_info:
@@ -633,7 +641,10 @@ class ArzekaPayment(BasePayment):
             ]
             if not set(required_receipt_fields).issubset(additional_info.keys()):
                 raise ArzekaValidationError(
-                    f"When generateReceipt is True, additional_info must contain: {', '.join(required_receipt_fields)}"
+                    _(
+                        "When generateReceipt is True, additional_info must contain: %(fields)s"
+                    )
+                    % {"fields": ", ".join(required_receipt_fields)}
                 )
 
         # Generate order ID if not provided
@@ -689,7 +700,7 @@ class ArzekaPayment(BasePayment):
         self._ensure_valid_token()
 
         if not mapped_order_id or not isinstance(mapped_order_id, str):
-            raise ArzekaValidationError("mapped_order_id must be a non-empty string")
+            raise ArzekaValidationError(_("mapped_order_id must be a non-empty string"))
 
         logger.info(f"Checking payment status for order: {mapped_order_id}")
 
@@ -868,7 +879,7 @@ def initiate_payment(
     # Check if authenticated
     if client._token is None:
         raise ArzekaAuthenticationError(
-            "Not authenticated. Please call authenticate() first."
+            _("Not authenticated. Please call authenticate() first.")
         )
 
     return client.initiate_payment(
@@ -919,7 +930,7 @@ def check_payment(
     # Check if authenticated
     if client._token is None:
         raise ArzekaAuthenticationError(
-            "Not authenticated. Please call authenticate() first."
+            _("Not authenticated. Please call authenticate() first.")
         )
 
     return client.check_payment(mapped_order_id, transaction_id)

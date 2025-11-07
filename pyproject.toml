@@ -26,3 +26,12 @@ Repository = "https://github.com/parice02/fasoarzeka.git"
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"fasoarzeka" = [
+    "locales/*/LC_MESSAGES/*.mo",
+    "locales/*/LC_MESSAGES/*.po",
+]
+
+[tool.setuptools]
+include-package-data = true
