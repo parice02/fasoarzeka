@@ -28,10 +28,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Constants
-BASE_URL = "https://pgw-test.fasoarzeka.bf/AvepayPaymentGatewayUI/avepay-payment/"
+BASE_URL = "https://pgw-test.fasoarzeka.bf/"
+PAYMENT_BASE_URL = BASE_URL + "AvepayPaymentGatewayUI/avepay-payment/"
+SMS_BASE_URL = BASE_URL + "AvepayPaymentGatewayUI/ArzekaSmsSender/"
 INITIATE_PAYMENT_ENDPOINT = "app/initializePayment"
 AUTH_ENDPOINT = "auth/getToken"
 PAYMENT_VERIFICATION_ENDPOINT = "app/getThirdPartyMapInfo"
+SEND_SMS = SMS_BASE_URL + "sendSms"
+CHECK_SMS_STATUS = SMS_BASE_URL + "checkSms"
 DEFAULT_TIMEOUT = 30
 MAX_RETRIES = 3
 MINIMUM_AMOUNT = 100  # Minimum payment amount in Franc CFA (XOF)
@@ -48,7 +52,9 @@ class BasePayment:
         timeout (int): Request timeout in seconds
     """
 
-    def __init__(self, base_url: str = BASE_URL, timeout: int = DEFAULT_TIMEOUT):
+    def __init__(
+        self, base_url: str = PAYMENT_BASE_URL, timeout: int = DEFAULT_TIMEOUT
+    ):
         """
         Initialize the BasePayment client
 
@@ -262,7 +268,9 @@ class ArzekaPayment(BasePayment):
     Provides methods to initiate and check payment status
     """
 
-    def __init__(self, base_url: str = BASE_URL, timeout: int = DEFAULT_TIMEOUT):
+    def __init__(
+        self, base_url: str = PAYMENT_BASE_URL, timeout: int = DEFAULT_TIMEOUT
+    ):
         """
         Initialize Arzeka Payment client
 
@@ -705,6 +713,128 @@ class ArzekaPayment(BasePayment):
         logger.info(f"Payment status retrieved for order: {mapped_order_id}")
         return response
 
+    def send_sms(
+        self,
+        mobile: str,
+        message: str,
+        sender: Optional[str] = None,
+        **kwargs,
+    ) -> Dict[str, Any]:
+        """
+        Send an SMS using the Arzeka SMS sender endpoint
+
+        Args:
+            mobile: Recipient phone number (string)
+            message: SMS message content
+            sender: Optional sender identifier
+            **kwargs: Additional parameters forwarded to the SMS API
+
+        Returns:
+            Response data from the SMS API as a dict
+
+        Raises:
+            ArzekaValidationError: If inputs are invalid
+            ArzekaAPIError / ArzekaConnectionError: On request failures
+        """
+        # Ensure authentication
+        self._ensure_valid_token()
+
+        if not mobile or not isinstance(mobile, str):
+            raise ArzekaValidationError("mobile must be a non-empty string")
+
+        if not message or not isinstance(message, str):
+            raise ArzekaValidationError("message must be a non-empty string")
+
+        data: Dict[str, Any] = {"mobile": mobile, "message": message}
+        if sender:
+            data["sender"] = sender
+
+        # Merge additional kwargs
+        if kwargs:
+            data.update(kwargs)
+
+        url = SEND_SMS
+
+        headers = self._get_headers({})
+
+        try:
+            response = self._session.post(url, data=data, headers=headers, timeout=self.timeout)
+            response.raise_for_status()
+
+            try:
+                return response.json()
+            except ValueError:
+                return {"raw_response": response.text}
+
+        except requests.exceptions.Timeout as e:
+            logger.error(f"SMS request timeout: {e}")
+            raise ArzekaConnectionError(f"SMS request timeout after {self.timeout} seconds") from e
+
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"SMS connection error: {e}")
+            raise ArzekaConnectionError(f"Failed to connect to SMS endpoint: {e}") from e
+
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"SMS HTTP error: {e}")
+            try:
+                error_data = response.json()
+            except ValueError:
+                error_data = {"error": response.text}
+
+            raise ArzekaAPIError(f"SMS request failed: {e}", status_code=response.status_code, response_data=error_data) from e
+
+        except Exception as e:
+            logger.error(f"Unexpected error sending SMS: {e}")
+            raise ArzekaPaymentError(f"Unexpected error sending SMS: {e}") from e
+
+    def check_sms_status(self, sms_id: str) -> Dict[str, Any]:
+        """Check the delivery/status of a previously sent SMS
+
+        Args:
+            sms_id: Identifier of the SMS to check
+
+        Returns:
+            Response data from the SMS status API as a dict
+        """
+        self._ensure_valid_token()
+
+        if not sms_id or not isinstance(sms_id, str):
+            raise ArzekaValidationError("sms_id must be a non-empty string")
+
+        url = CHECK_SMS_STATUS
+
+        headers = self._get_headers({})
+
+        try:
+            response = self._session.get(url, params={"smsId": sms_id}, headers=headers, timeout=self.timeout)
+            response.raise_for_status()
+
+            try:
+                return response.json()
+            except ValueError:
+                return {"raw_response": response.text}
+
+        except requests.exceptions.Timeout as e:
+            logger.error(f"SMS status request timeout: {e}")
+            raise ArzekaConnectionError(f"SMS status request timeout after {self.timeout} seconds") from e
+
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"SMS status connection error: {e}")
+            raise ArzekaConnectionError(f"Failed to connect to SMS status endpoint: {e}") from e
+
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"SMS status HTTP error: {e}")
+            try:
+                error_data = response.json()
+            except ValueError:
+                error_data = {"error": response.text}
+
+            raise ArzekaAPIError(f"SMS status request failed: {e}", status_code=response.status_code, response_data=error_data) from e
+
+        except Exception as e:
+            logger.error(f"Unexpected error checking SMS status: {e}")
+            raise ArzekaPaymentError(f"Unexpected error checking SMS status: {e}") from e
+
 
 # Shared client instance for convenience functions
 _shared_client: Optional[ArzekaPayment] = None
@@ -712,7 +842,7 @@ _shared_client_config: Dict[str, Any] = {}
 
 
 def _get_shared_client(
-    base_url: str = BASE_URL, timeout: int = DEFAULT_TIMEOUT
+    base_url: str = PAYMENT_BASE_URL, timeout: int = DEFAULT_TIMEOUT
 ) -> ArzekaPayment:
     """
     Get or create a shared ArzekaPayment client instance
@@ -787,7 +917,7 @@ def close_shared_client() -> None:
 def authenticate(
     username: str,
     password: str,
-    base_url: str = BASE_URL,
+    base_url: str = PAYMENT_BASE_URL,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> Dict[str, Any]:
     """
@@ -821,7 +951,7 @@ def authenticate(
 
 def initiate_payment(
     payment_data: Dict[str, Any],
-    base_url: str = BASE_URL,
+    base_url: str = PAYMENT_BASE_URL,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> Tuple[Dict[str, str], Dict[str, str]]:
     """
@@ -885,7 +1015,7 @@ def initiate_payment(
 def check_payment(
     mapped_order_id: str,
     transaction_id: Optional[str] = None,
-    base_url: str = BASE_URL,
+    base_url: str = PAYMENT_BASE_URL,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> Dict[str, Any]:
     """
@@ -923,3 +1053,37 @@ def check_payment(
         )
 
     return client.check_payment(mapped_order_id, transaction_id)
+
+
+def send_sms(
+    mobile: str,
+    message: str,
+    sender: Optional[str] = None,
+    base_url: str = PAYMENT_BASE_URL,
+    timeout: int = DEFAULT_TIMEOUT,
+) -> Dict[str, Any]:
+    """Send an SMS using the shared client instance.
+
+    Convenience wrapper that uses the module-level shared client. Requires
+    prior authentication (call `authenticate()` first).
+    """
+    client = _get_shared_client(base_url, timeout)
+
+    if client._token is None:
+        raise ArzekaAuthenticationError("Not authenticated. Please call authenticate() first.")
+
+    return client.send_sms(mobile=mobile, message=message, sender=sender)
+
+
+def check_sms_status(
+    sms_id: str,
+    base_url: str = PAYMENT_BASE_URL,
+    timeout: int = DEFAULT_TIMEOUT,
+) -> Dict[str, Any]:
+    """Check the SMS delivery/status using the shared client instance."""
+    client = _get_shared_client(base_url, timeout)
+
+    if client._token is None:
+        raise ArzekaAuthenticationError("Not authenticated. Please call authenticate() first.")
+
+    return client.check_sms_status(sms_id)

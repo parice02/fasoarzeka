@@ -10,6 +10,8 @@ from .arzeka import (
     close_shared_client,
     get_shared_client,
     initiate_payment,
+    send_sms,
+    check_sms_status,
 )
 from .utils import (
     format_msisdn,
@@ -29,6 +31,8 @@ __all__ = [
     "authenticate",
     "close_shared_client",
     "get_shared_client",
+    "send_sms",
+    "check_sms_status",
     # Utility functions
     "get_reference",
     "format_msisdn",
