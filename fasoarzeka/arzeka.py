@@ -43,7 +43,7 @@ CHECK_SMS_STATUS = "checkSms"
 DEFAULT_TIMEOUT = 30
 MAX_RETRIES = 3
 MINIMUM_AMOUNT = 100  # Minimum payment amount in Franc CFA (XOF)
-EXPIRATION_MARGIN_SECONDS = 60  # Default margin for token validity checks
+EXPIRATION_MARGIN_SECONDS = 2 * 60  # Default margin for token validity checks
 
 
 class BasePayment:
@@ -323,13 +323,6 @@ class ArzekaPayment(BasePayment):
         # Check if token is still valid (considering the margin)
         is_valid = time_until_expiry > margin_seconds
 
-        if is_valid:
-            logger.debug(f"Token is valid. Expires in {time_until_expiry:.0f} seconds")
-        else:
-            logger.debug(
-                f"Token expired or will expire soon (in {time_until_expiry:.0f} seconds)"
-            )
-
         return is_valid
 
     def get_token_expiry_info(self) -> Dict[str, Any]:
@@ -474,7 +467,7 @@ class ArzekaPayment(BasePayment):
             logger.info(f"Sending authentication request to {url}")
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
-                "User-Agent": "etimbre-client",
+                "User-Agent": "fasoarzeka-client",
                 "Accept-Language": "fr-FR,en-GB;q=0.8,en;q=0.6",
             }
 
@@ -496,6 +489,11 @@ class ArzekaPayment(BasePayment):
                 raise ArzekaAuthenticationError(
                     "Invalid response format from authentication endpoint"
                 )
+            except requests.exceptions.JSONDecodeError as e:
+                logger.error(f"JSON decode error during authentication: {e}")
+                raise ArzekaAuthenticationError(
+                    "Invalid JSON response from authentication endpoint"
+                ) from e
 
             # Validate response contains required fields
             if "access_token" not in response_data:
@@ -524,26 +522,16 @@ class ArzekaPayment(BasePayment):
         except requests.exceptions.HTTPError as e:
             logger.error(f"Authentication failed: {e}")
 
-            # Handle authentication-specific errors
-            if response.status_code == 401:
-                raise ArzekaAuthenticationError(
-                    "Invalid credentials: username or password is incorrect"
-                ) from e
-            elif response.status_code == 403:
-                raise ArzekaAuthenticationError(
-                    "Access forbidden: account may be locked or inactive"
-                ) from e
-            else:
-                try:
-                    error_data = response.json()
-                except ValueError:
-                    error_data = {"error": response.text}
-
-                raise ArzekaAPIError(
-                    f"Authentication request failed: {e}",
-                    status_code=response.status_code,
-                    response_data=error_data,
-                ) from e
+            # Handle authentication errors
+            try:
+                error_data = response.json()
+            except requests.exceptions.JSONDecodeError:
+                error_data = {"error": response.text}
+            raise ArzekaAPIError(
+                f"Authentication request failed: {e}",
+                status_code=response.status_code,
+                response_data=error_data,
+            ) from e
 
         except requests.exceptions.ConnectionError as e:
             logger.error(f"Connection error during authentication: {e}")
