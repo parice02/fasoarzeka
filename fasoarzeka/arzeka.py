@@ -519,6 +519,7 @@ class ArzekaPayment(BasePayment):
                 "access_token": response_data.get("access_token"),
                 "token_type": response_data.get("token_type", "Bearer"),
                 "expires_in": response_data.get("expires_in", 3600),
+                "expires_at": self._expires_at,
             }
 
         except requests.exceptions.HTTPError as e:
