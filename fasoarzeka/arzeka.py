@@ -6,7 +6,7 @@ Unofficial API client for Arzeka mobile money payments in Burkina Faso
 import base64
 import json
 import logging
-import time
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional, Tuple
 from urllib.parse import urljoin
 
@@ -314,8 +314,8 @@ class ArzekaPayment(BasePayment):
             logger.debug("No expiration timestamp available")
             return False
 
-        # Get current timestamp
-        current_time = time.time()
+        # Get current timestamp in UTC (même timezone que le serveur)
+        current_time = datetime.now(timezone.utc).timestamp()
 
         # Calculate time until expiration
         time_until_expiry = self._expires_at - current_time
@@ -345,7 +345,7 @@ class ArzekaPayment(BasePayment):
             >>> print(f"Token expires in {info['expires_in_minutes']:.1f} minutes")
             >>> print(f"Is valid: {info['is_valid']}")
         """
-        current_time = time.time()
+        current_time = datetime.now(timezone.utc).timestamp()
 
         if self._token is None:
             return {
@@ -505,7 +505,9 @@ class ArzekaPayment(BasePayment):
             # Update the client's token if authentication successful
             if response_data.get("access_token"):
                 self._token = response_data["access_token"]
-                self._expires_at = time.time() + float(response_data["expires_in"])
+                self._expires_at = datetime.now(timezone.utc).timestamp() + float(
+                    response_data["expires_in"]
+                )
                 # Store credentials for automatic re-authentication
                 self._username = username
                 self._password = password
